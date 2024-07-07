@@ -3,7 +3,7 @@
 namespace ProjGPIO
 {
     //constructor
-    esp_err_t GPIOLed::_init(const gpio_num_t pin/*, const int size/*, const strip_t type*/){
+    esp_err_t GPIOLed::_init(const gpio_num_t pin, const int size, const strip_t type){
         
         esp_err_t status{ESP_OK};
 

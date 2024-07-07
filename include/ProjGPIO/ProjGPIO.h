@@ -10,7 +10,7 @@
 #include "freertos/task.h"
 #include "freertos/queue.h"
 #include "driver/gpio.h"
-#include <driver/rmt.h>
+#include <driver/rmt_tx.h>
 #include "esp_event.h"
 
 namespace ProjGPIO
@@ -52,7 +52,7 @@ namespace ProjGPIO
             strip_t _type;
             int _size;
 
-            esp_err_t _init(gpio_num_t pin/*, const int size, const strip_t type*/);
+            esp_err_t _init(gpio_num_t pin, const int size, const strip_t type);
 
             esp_err_t set(rgb colour,int index);
             esp_err_t show();
