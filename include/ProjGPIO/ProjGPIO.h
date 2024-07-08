@@ -60,10 +60,10 @@ namespace ProjGPIO
             gpio_num_t get(int index);
 
             esp_err_t rmt_new_ws_encoder(rmt_encoder_handle_t *ret_encoder, int size);
+            static size_t rmt_encode_ws(rmt_encoder_t *encoder, rmt_channel_handle_t channel, const void *primary_data, size_t data_size, rmt_encode_state_t *ret_state);
         private:
             rmt_channel_handle_t tx_chan;
             rmt_encoder_handle_t ws_encoder;
             rmt_transmit_config_t tr_cfg;
-            static size_t rmt_encode_ws(rmt_encoder_t *encoder, rmt_channel_handle_t channel, const void *primary_data, size_t data_size, rmt_encode_state_t *ret_state);
     };
 }

@@ -70,11 +70,11 @@ class Radio{
 
     static const Config DEFAULT_CONFIG;
 
-    SimpleRadioImpl();
-    SimpleRadioImpl(const SimpleRadioImpl&) = delete;
-    ~SimpleRadioImpl();
+    Radio();
+    Radio(const Radio&) = delete;
+    ~Radio();
 
-    esp_err_t begin(uint8_t group = 0, const SimpleRadioImpl::Config& config = DEFAULT_CONFIG);
+    esp_err_t begin(uint8_t group = 0, const Radio::Config& config = DEFAULT_CONFIG);
     void end();
 
     // group in range <0,16)

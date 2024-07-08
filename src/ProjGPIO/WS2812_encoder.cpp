@@ -43,7 +43,7 @@ namespace ProjGPIO{
         return status;
     }
 
-    static size_t rmt_encode_ws(rmt_encoder_t *encoder, rmt_channel_handle_t channel, const void *primary_data, size_t data_size, rmt_encode_state_t *ret_state){
+    size_t GPIOLed::rmt_encode_ws(rmt_encoder_t *encoder, rmt_channel_handle_t channel, const void *primary_data, size_t data_size, rmt_encode_state_t *ret_state){
         rmt_ws_encoder_t *ws_encoder = __containerof(encoder, rmt_ws_encoder_t, base);
         rmt_encode_state_t session_state = RMT_ENCODING_RESET;
         rmt_encode_state_t state = RMT_ENCODING_RESET;
