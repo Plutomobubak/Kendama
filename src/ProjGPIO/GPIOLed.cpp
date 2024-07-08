@@ -3,9 +3,7 @@
 namespace ProjGPIO
 {
     //constructor
-    esp_err_t GPIOLed::_init(const gpio_num_t pin, const int size, const strip_t type){
-        
-        esp_err_t status{ESP_OK};
+    void GPIOLed::_init(const gpio_num_t pin, const int size, const strip_t type){
 
         _pin = pin;
         //_size = size;
@@ -21,17 +19,17 @@ namespace ProjGPIO
         cfg.flags.invert_out = false;        
         cfg.flags.with_dma = false;
 
-        status |= rmt_new_tx_channel(&cfg, &tx_chan);
+        rmt_new_tx_channel(&cfg, &tx_chan);
 
         rmt_carrier_config_t car_cfg;
         car_cfg.duty_cycle = 0.33;
         car_cfg.frequency_hz = 800000;
 
-        status |= rmt_apply_carrier(tx_chan,&car_cfg);
+        rmt_apply_carrier(tx_chan,&car_cfg);
 
         ws_encoder = NULL;
-        status |= rmt_new_ws_encoder(&ws_encoder,/*size*/1);
-        status |= rmt_enable(tx_chan);
+        rmt_new_ws_encoder(&ws_encoder,/*size*/1);
+        rmt_enable(tx_chan);
 
         tr_cfg.loop_count = 0;
 
@@ -40,8 +38,7 @@ namespace ProjGPIO
         leds[0].g = 255;
         leds[0].r = 255;
 
-        status |= rmt_transmit(tx_chan,ws_encoder,leds,sizeof(leds),&tr_cfg);
-        return status;
+        rmt_transmit(tx_chan,ws_encoder,leds,sizeof(leds),&tr_cfg);
     }
 
     esp_err_t GPIOLed::show(){

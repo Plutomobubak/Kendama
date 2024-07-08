@@ -3,10 +3,9 @@
 namespace ProjGPIO
 {
     //Constructor for input pin
-    esp_err_t GPIOIn::_init(const gpio_num_t pin, const bool active_low)
-    {
-        esp_err_t status{ESP_OK};
 
+    void GPIOIn::_init(const gpio_num_t pin, const bool active_low)
+    {
         _pin = pin;
         _active_low = active_low;
 
@@ -17,12 +16,10 @@ namespace ProjGPIO
         cfg.pull_down_en = GPIO_PULLDOWN_DISABLE;
         cfg.intr_type = GPIO_INTR_DISABLE;
 
-        status |= gpio_config(&cfg);
-
-        return status;
+        gpio_config(&cfg);
     }
-    esp_err_t GPIOIn::_init(const gpio_num_t pin){
-        return _init(pin, true);
+    void GPIOIn::_init(const gpio_num_t pin){
+        _init(pin, true);
     }
 
     int GPIOIn::read(){

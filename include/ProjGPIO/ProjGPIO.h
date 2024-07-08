@@ -19,8 +19,9 @@ namespace ProjGPIO
         public:
             gpio_num_t _pin;
             bool _active_low;
-            esp_err_t _init(const gpio_num_t pin, const bool active_low);
-            esp_err_t _init(const gpio_num_t pin);
+            
+            void _init(const gpio_num_t pin, const bool active_low);
+            void _init(const gpio_num_t pin);
 
             int read(void);
 
@@ -52,7 +53,7 @@ namespace ProjGPIO
             strip_t _type;
             int _size;
 
-            esp_err_t _init(gpio_num_t pin, const int size, const strip_t type);
+            void _init(const gpio_num_t pin, const int size, const strip_t type);
 
             esp_err_t set(rgb colour,int index);
             esp_err_t show();

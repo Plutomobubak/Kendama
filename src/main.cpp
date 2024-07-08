@@ -17,6 +17,8 @@ void Test::run(int c,int delayMs)
 }
 
 void Test::setup(){
+    led._init(GPIO_NUM_21,2,ProjGPIO::GPIOLed::strip_t::WS2812);
+    button._init(GPIO_NUM_18, true);
     button.enableCallback(GPIO_INTR_NEGEDGE,[](){});
 }
 extern "C" void app_main(void)
