@@ -2,23 +2,24 @@
 #include "freertos/task.h"
 #include "esp_task_wdt.h"
 
-#include "main.h"
+#include "GPIO.h"
+#include <Led.h>
 #include <iostream>
 
 using namespace std;
 
-Test App;
+Led led(GPIO_NUM_21,8,1,LED_WS2812,DoubleBuffer);
+GPIOIn button(GPIO_NUM_18, true);
 
-void Test::run(int c,int delayMs)
+void run(int c,int delayMs)
 {
-    std::cout << button.read() << endl;
     vTaskDelay(pdMS_TO_TICKS(delayMs));
+    for(int i=0;i<8;i++)
+        led[i]=Rgb{static_cast<uint8_t>(rand()%256),static_cast<uint8_t>(rand()%256),static_cast<uint8_t>(rand()%256)};
     led.show();
 }
 
-void Test::setup(){
-    led._init(GPIO_NUM_21,2,ProjGPIO::GPIOLed::strip_t::WS2812);
-    button._init(GPIO_NUM_18, true);
+void setup(){
     button.enableCallback(GPIO_INTR_NEGEDGE,[](){});
 }
 extern "C" void app_main(void)
@@ -27,10 +28,10 @@ extern "C" void app_main(void)
 
     int c=0;
 
-    App.setup();
+    setup();
     while (true)
     {
-        App.run(c, 1000);
+        run(c, 1000);
         c++;
     }    
 }

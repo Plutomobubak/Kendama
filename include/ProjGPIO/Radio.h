@@ -12,7 +12,6 @@
 #include <mutex>
 #include <string>
 
-namespace ProjGPIO{
 enum PacketDataType : uint8_t {
     String = 0,
     Number = 1, // double
@@ -161,4 +160,3 @@ private:
 
     mutable std::mutex m_mutex;
 };
-}
