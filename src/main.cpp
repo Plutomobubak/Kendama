@@ -6,6 +6,7 @@
 #include <Led.h>
 #include <Adc.h>
 #include <Servo.h>
+#include <DCMotor.h>
 #include <iostream>
 
 using namespace std;
@@ -13,7 +14,7 @@ using namespace std;
 Led led(GPIO_NUM_21,8,1,LED_WS2812,DoubleBuffer);
 GPIOIn button(GPIO_NUM_18, true);
 Adc met(GPIO_NUM_2);
-Servo ser(GPIO_NUM_40,Default);
+Servo ser(GPIO_NUM_21,Default); 
 
 void run(int c,int delayMs)
 {
@@ -21,6 +22,8 @@ void run(int c,int delayMs)
     for(int i=0;i<8;i++)
         led[i]=Rgb{static_cast<uint8_t>(met.get()%256),static_cast<uint8_t>(0%256),static_cast<uint8_t>(0%256)};
     led.show();
+    robutekL.setSpeed(200);
+    robutekL.moveDistance(100);
 }
 
 void setup(){
