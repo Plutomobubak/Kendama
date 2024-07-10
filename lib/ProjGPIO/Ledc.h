@@ -34,15 +34,15 @@ class Ledc {
         }
 
         void configureChannel(int channelNum, int gpioNum, int timerNum, int duty) {
-            auto timer = _usedTimers.find(timerNum);
+            /*auto timer = _usedTimers.find(timerNum);
             if (timer == _usedTimers.end()) {
                 std::cerr << "Timer not configured" << std::endl;
             }
             if (duty < 0 || duty > 1023) {
                 std::cerr << "Duty must be between 0 and 1023" << std::endl;
-            }
+            }*/
 
-            duty = (1 << timer->second) * duty / 1023;
+            //duty = (1 << timer->second) * duty / 1023;
 
             ledc_channel_config_t ledc_channel = {
                 .gpio_num = (gpioNum),
@@ -82,11 +82,11 @@ class Ledc {
                 std::cerr << "Channel not in use" << std::endl;
             }
             auto timer = _usedTimers.find(channel->second);
-            if (duty < 0 || duty > 1023) {
+            /*if (duty < 0 || duty > 1023) {
                 std::cerr << "Duty must be between 0 and 1023" << std::endl;
-            }
+            }*/
 
-            duty = (1 << timer->second) * duty / 1023;
+            //duty = (1 << timer->second) * duty / 1023;
 
             esp_err_t err = ledc_set_duty(LEDC_LOW_SPEED_MODE, static_cast<ledc_channel_t>(channelNum), duty);
             if (err != ESP_OK) {

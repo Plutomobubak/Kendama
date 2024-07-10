@@ -11,24 +11,20 @@
 
 using namespace std;
 
-Led led(GPIO_NUM_21,8,1,LED_WS2812,DoubleBuffer);
-GPIOIn button(GPIO_NUM_18, true);
-Adc met(GPIO_NUM_2);
-Servo ser(GPIO_NUM_21,Default); 
+//Servo ser(GPIO_NUM_21,Default); 
 
 void run(int c,int delayMs)
 {
     vTaskDelay(pdMS_TO_TICKS(delayMs));
-    for(int i=0;i<8;i++)
-        led[i]=Rgb{static_cast<uint8_t>(met.get()%256),static_cast<uint8_t>(0%256),static_cast<uint8_t>(0%256)};
-    led.show();
-    robutekL.setSpeed(200);
-    robutekL.moveDistance(100);
 }
 
 void setup(){
-    button.enableCallback(GPIO_INTR_NEGEDGE,[](){});
-    ser.set(0);
+    robutekL.startTicker();
+    robutekR.startTicker();
+    robutekL.setSpeed(INT_MAX);
+    robutekR.setSpeed(INT_MAX);
+    robutekL.moveDistance(10);
+    robutekR.moveDistance(10);
 }
 extern "C" void app_main(void)
 {

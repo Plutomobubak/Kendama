@@ -14,6 +14,8 @@
 #include <limits>
 #include <iostream>
 
+#include <Ledc.h>
+
 
 class QEncoder {
     std::atomic<int64_t> _accum = 0;
@@ -125,7 +127,8 @@ public:
 class DCMotor {
     QEncoder _enc;
     const int _regP;
-
+    Ledc _driverA;
+    Ledc _driverB;
     const ledc_channel_t _channelA;
     const ledc_channel_t _channelB;
 
@@ -151,15 +154,19 @@ class DCMotor {
 
     void setOutput(int power) {
         if (power < 0) {
-            ledc_set_duty(LEDC_LOW_SPEED_MODE, _channelA, -power);
-            ledc_set_duty(LEDC_LOW_SPEED_MODE, _channelB, 0);
+            /*ledc_set_duty(LEDC_LOW_SPEED_MODE, _channelA, -power);
+            ledc_set_duty(LEDC_LOW_SPEED_MODE, _channelB, 0);*/
+            _driverA.setDuty(_channelA, -power);
+            _driverB.setDuty(_channelB, 0);
         }
         else {
-            ledc_set_duty(LEDC_LOW_SPEED_MODE, _channelA, 0);
-            ledc_set_duty(LEDC_LOW_SPEED_MODE, _channelB, power);
+            /*ledc_set_duty(LEDC_LOW_SPEED_MODE, _channelA, 0);
+            ledc_set_duty(LEDC_LOW_SPEED_MODE, _channelB, power);*/
+            _driverA.setDuty(_channelA, 0);
+            _driverB.setDuty(_channelB, power);
         }
-        ledc_update_duty(LEDC_LOW_SPEED_MODE, _channelA);
-        ledc_update_duty(LEDC_LOW_SPEED_MODE, _channelB);
+        /*ledc_update_duty(LEDC_LOW_SPEED_MODE, _channelA);
+        ledc_update_duty(LEDC_LOW_SPEED_MODE, _channelB);*/
     }
 
     void callHandler() {
@@ -173,7 +180,7 @@ public:
     DCMotor(gpio_num_t motA, gpio_num_t motB, gpio_num_t encA, gpio_num_t encB, int regP, ledc_timer_t timer, ledc_channel_t channelA, ledc_channel_t channelB):
         _enc(encA, encB), _regP(regP), _channelA(channelA), _channelB(channelB), _maxSpeed(0), _actualTargetPos(0)
     {
-        ledc_channel_config_t confA = {
+        /*ledc_channel_config_t confA = {
             .gpio_num = motA,
             .speed_mode = LEDC_LOW_SPEED_MODE,
             .channel = channelA,
@@ -183,9 +190,13 @@ public:
             .hpoint = 0,
             .flags = { 0 }
         };
-        ledc_channel_config(&confA);
+        ledc_channel_config(&confA);*/
+        _driverA.configureTimer(timer, 50, 12);
+        _driverA.configureChannel(channelA, motA, timer, 0);
+        _driverB.configureTimer(timer, 50, 12);
+        _driverB.configureChannel(channelB, motB, timer, 0);
 
-        ledc_channel_config_t confB = {
+        /*ledc_channel_config_t confB = {
             .gpio_num = motB,
             .speed_mode = LEDC_LOW_SPEED_MODE,
             .channel = channelB,
@@ -195,12 +206,16 @@ public:
             .hpoint = 0,
             .flags = { 0 }
         };
-        ledc_channel_config(&confB);
+        ledc_channel_config(&confB);*/
+        this->startTicker();
     }
 
     ~DCMotor() {
-        ledc_stop(LEDC_LOW_SPEED_MODE, _channelA, 0);
-        ledc_stop(LEDC_LOW_SPEED_MODE, _channelB, 0);
+        this->stopTicker();
+        /*ledc_stop(LEDC_LOW_SPEED_MODE, _channelA, 0);
+        ledc_stop(LEDC_LOW_SPEED_MODE, _channelB, 0);*/
+        _driverA.~Ledc();
+        _driverB.~Ledc();
     }
 
     DCMotor(const DCMotor&) = delete;
@@ -273,10 +288,12 @@ public:
 
         mode = brake ? BREAK : FREE;
         if (brake) {
-            ledc_set_duty(LEDC_LOW_SPEED_MODE, _channelA, 1024);
+            /*ledc_set_duty(LEDC_LOW_SPEED_MODE, _channelA, 1024);
             ledc_set_duty(LEDC_LOW_SPEED_MODE, _channelB, 1024);
             ledc_update_duty(LEDC_LOW_SPEED_MODE, _channelA);
-            ledc_update_duty(LEDC_LOW_SPEED_MODE, _channelB);
+            ledc_update_duty(LEDC_LOW_SPEED_MODE, _channelB);*/
+            _driverA.setDuty(_channelA, 1023);
+            _driverB.setDuty(_channelB, 1023);
         }
         else {
             setOutput(0);
@@ -305,9 +322,9 @@ public:
             .name = "DCMotorTick",
             .skip_unhandled_events = true
         };
-
+        std::cout << "creating timer"<< std::endl;
         esp_timer_create(&tmrArgs, &_tmr);
-        esp_timer_start_periodic(_tmr, 1024);
+        esp_timer_start_periodic(_tmr, 100);
     }
 
     void stopTicker() {
@@ -319,4 +336,5 @@ public:
         return _enc.getPos();
     }
 };
-static DCMotor robutekL(GPIO_NUM_11,GPIO_NUM_12,GPIO_NUM_39,GPIO_NUM_40,406,(ledc_timer_t)0,(ledc_channel_t)0,(ledc_channel_t)1);
+DCMotor robutekL(GPIO_NUM_11,GPIO_NUM_12,GPIO_NUM_39,GPIO_NUM_40,50,(ledc_timer_t)0,(ledc_channel_t)0,(ledc_channel_t)1);
+DCMotor robutekR(GPIO_NUM_45,GPIO_NUM_13,GPIO_NUM_42,GPIO_NUM_41,50,(ledc_timer_t)1,(ledc_channel_t)2,(ledc_channel_t)3);
