@@ -6,25 +6,31 @@
 #include <Led.h>
 #include <Adc.h>
 #include <Servo.h>
-#include <DCMotor.h>
+#include <dcmotorl.h>
+#include <simple_radio.h>
 #include <iostream>
+//#include <NVSL.h>
 
 using namespace std;
 
-//Servo ser(GPIO_NUM_21,Default); 
+Servo ser(GPIO_NUM_21,Default);
+//NVSL nv(nullptr);
+
 
 void run(int c,int delayMs)
 {
     vTaskDelay(pdMS_TO_TICKS(delayMs));
+    SimpleRadio.sendNumber(69);
 }
 
 void setup(){
     robutekL.startTicker();
     robutekR.startTicker();
-    robutekL.setSpeed(INT_MAX);
-    robutekR.setSpeed(INT_MAX);
-    robutekL.moveDistance(10);
-    robutekR.moveDistance(10);
+    SimpleRadio.begin(0);
+    SimpleRadio.setOnNumberCallback([](double val, PacketInfo info){
+        cout << val << endl;
+    });
+   
 }
 extern "C" void app_main(void)
 {

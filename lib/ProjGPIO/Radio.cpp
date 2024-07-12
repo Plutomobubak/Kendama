@@ -48,7 +48,7 @@ Radio::~Radio() {
 
 esp_err_t Radio::begin(uint8_t group, const Radio::Config& config) {
     if (m_initialized) {
-        ESP_LOGE(TAG, "SimpleRadio is already initialized");
+        ESP_LOGE(TAG, "Radio is already initialized");
         return ESP_ERR_INVALID_STATE;
     }
 
@@ -110,7 +110,9 @@ esp_err_t Radio::begin(uint8_t group, const Radio::Config& config) {
     }
 
     if (config.init_bluedroid) {
-        ret = esp_bluedroid_init();
+        esp_bluedroid_config_t cfg;
+        cfg.ssp_en = false;
+        ret = esp_bluedroid_init_with_cfg(&cfg);
         if (ret) {
             ESP_LOGE(TAG, "%s init bluetooth failed: %s", __func__, esp_err_to_name(ret));
             goto exit_bt_disable;

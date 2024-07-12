@@ -15,5 +15,5 @@ Servo::Servo(const gpio_num_t pin, const ServoConfig cfg){
     _driver.configureChannel(4, _pin, 0, 1023);
 }
 void Servo::set(int angle){
-    _driver.setDuty(4, angle_to_duty(angle));;
+    _driver.setDuty(4, angle);;
 }
